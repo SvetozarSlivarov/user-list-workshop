@@ -1,3 +1,5 @@
+import { fromIsoDate } from "../utils/dateTimeUtils";
+
 export default function UserListItem(props) {
     return (
         <tr>
@@ -10,7 +12,7 @@ export default function UserListItem(props) {
             <td>{props.email}</td>
             <td>{props.phoneNumber}</td>
             {/* <td>June 28, 2022</td> */}
-            <td>{props.createdAt}</td>
+            <td>{fromIsoDate(props.createdAt)}</td>
 
 
             <td className="actions">

@@ -17,14 +17,17 @@ export default function UserList() {
 
     }, []);
 
-    const addUserCreateHandler = () => {
+    const createUserClickHandler = () => {
         setShowCreate(true);
+    }
+    const closeCreateUserClickHandler = () => {
+        setShowCreate(false);
     }
     
     return (
         <section className="card users-container">
             <Search />
-            {showCreate && <UserCreate />}
+            {showCreate && <UserCreate onClose={closeCreateUserClickHandler} />}
             {/* <UserCreate /> */}
             <div className="table-wrapper">
                 {/* <div className="overlay">
@@ -231,7 +234,7 @@ export default function UserList() {
                 </table>
             </div>
 
-            <button className="btn-add btn" onClick={addUserCreateHandler}>Add new user</button>
+            <button className="btn-add btn" onClick={createUserClickHandler}>Add new user</button>
 
             < Pagination />
         </section>

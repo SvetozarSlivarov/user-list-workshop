@@ -6,12 +6,14 @@ import userService from "../services/userService.js";
 import UserCreate from "./UserCreate.jsx";
 import UserInfo from "./UserInfo.jsx";
 import UserDelete from "./UserDelete.jsx";
+import UserEdit from "./UserEdit.jsx";
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
     const [userIdInfo, setUserIdInfo] = useState(null); 
     const [userIdDelete, setUserIdDelete] = useState(null);
+    const [userIdEdit, setUserIdEdit] = useState(null);
 
     useEffect(() => {
         userService.getAll()
@@ -61,7 +63,29 @@ export default function UserList() {
         //!Delete fron local state
         setUsers(state => state.filter(user => user._id !== userIdDelete))
         //!Close modal
-        setUserIdDelete(null)
+        setUserIdDelete(null);
+    }
+    const userEditClickHandler = (userId) => {
+        setUserIdEdit(userId);
+    }
+    const userEditCloseHandler = () => {
+        setUserIdEdit(null);
+    }
+    const saveEditUserHandler = async (e) => {
+        const userId = userIdEdit
+        //! Stop default refresh behaviour
+        e.preventDefault();
+        //! Get form data
+        const formData = new FormData(e.target);
+        const userData = Object.fromEntries(formData)
+        console.log(userData);
+        //! Create new user an server
+        const updatedUser = await userService.update(userId ,userData);
+        console.log(updatedUser);
+        //!update local state
+        setUsers(state => state.map(user => user._id === userId ? updatedUser: user))
+        //! close modal
+        setUserIdEdit(null);
     }
 
     
@@ -84,6 +108,13 @@ export default function UserList() {
                 (<UserDelete
                     onClose = {userDeleteCloseHnadler}
                     onDelete = {userDeleteHandler}
+                />
+            )}
+            {userIdEdit &&
+                (<UserEdit
+                    onClose = {userEditCloseHandler}
+                    onSave = {saveEditUserHandler}
+                    userId = {userIdEdit}
                 />
             )}
             <div className="table-wrapper">
@@ -289,6 +320,7 @@ export default function UserList() {
                             key={user._id} 
                             onInfoClick = {userInfoClickHandler}
                             onDeleteClick = {userDeleteClickHandler}
+                            onEditClick = {userEditClickHandler}
                             {...user}/>)}
                         
                     </tbody>

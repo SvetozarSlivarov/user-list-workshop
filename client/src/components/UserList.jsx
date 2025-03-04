@@ -5,11 +5,13 @@ import UserListItem from "./UserListItem";
 import userService from "../services/userService.js";
 import UserCreate from "./UserCreate.jsx";
 import UserInfo from "./UserInfo.jsx";
+import UserDelete from "./UserDelete.jsx";
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
-    const [userIdInfo, setUserIdInfo] = useState(); 
+    const [userIdInfo, setUserIdInfo] = useState(null); 
+    const [userIdDelete, setUserIdDelete] = useState(null);
 
     useEffect(() => {
         userService.getAll()
@@ -40,11 +42,26 @@ export default function UserList() {
         //! close modal
         setShowCreate(false);
     }
-    const userInfoClickHAndler = (userId) => {
+    const userInfoClickHandler = (userId) => {
         setUserIdInfo(userId);
     };
-    const closeDetailUserClickHandler = () => {
-        setUserIdInfo(false);
+    const userDeleteClickHandler = (userId) => {
+        setUserIdDelete(userId);
+    };
+    const userInfoCloseHandler = () => {
+        setUserIdInfo(null);
+    }
+    const userDeleteCloseHnadler = () => {
+        setUserIdDelete(null);
+    }
+    const userDeleteHandler = async () => {
+        //! Delete request to server
+        await userService.delete(userIdDelete);
+
+        //!Delete fron local state
+        setUsers(state => state.filter(user => user._id !== userIdDelete))
+        //!Close modal
+        setUserIdDelete(null)
     }
 
     
@@ -60,7 +77,13 @@ export default function UserList() {
             {userIdInfo && 
                 (<UserInfo 
                     userId = {userIdInfo}
-                    onClose= {closeDetailUserClickHandler}
+                    onClose= {userInfoCloseHandler}
+                />
+            )}
+            {userIdDelete &&
+                (<UserDelete
+                    onClose = {userDeleteCloseHnadler}
+                    onDelete = {userDeleteHandler}
                 />
             )}
             <div className="table-wrapper">
@@ -264,7 +287,8 @@ export default function UserList() {
                     <tbody>
                         {users.map(user => < UserListItem 
                             key={user._id} 
-                            onInfoClick = {userInfoClickHAndler}
+                            onInfoClick = {userInfoClickHandler}
+                            onDeleteClick = {userDeleteClickHandler}
                             {...user}/>)}
                         
                     </tbody>

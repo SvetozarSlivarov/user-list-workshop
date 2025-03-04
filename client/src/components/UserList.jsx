@@ -43,6 +43,10 @@ export default function UserList() {
     const userInfoClickHAndler = (userId) => {
         setUserIdInfo(userId);
     };
+    const closeDetailUserClickHandler = () => {
+        setUserIdInfo(false);
+    }
+
     
     return (
         <section className="card users-container">
@@ -56,6 +60,7 @@ export default function UserList() {
             {userIdInfo && 
                 (<UserInfo 
                     userId = {userIdInfo}
+                    onClose= {closeDetailUserClickHandler}
                 />
             )}
             <div className="table-wrapper">
